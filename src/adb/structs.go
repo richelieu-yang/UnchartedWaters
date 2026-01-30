@@ -14,7 +14,7 @@ type Adb struct {
 		（1）基本语法：adb connect <设备IP地址>:<端口号>
 		（2）默认端口号是 5555，如果使用默认端口，可以省略端口号
 			e.g. adb connect 192.168.1.100 <=> adb connect 192.168.1.100:5555
-		（3）mac上，Bluestacks Air默认是 "127.0.0.1:5555"
+		（3）mac上，BlueStacks Air默认是 "127.0.0.1:5555"
 	*/
 	Address string
 }
