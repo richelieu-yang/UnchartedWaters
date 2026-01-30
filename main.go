@@ -13,5 +13,8 @@ func main() {
 		console.Fatalf("a.CheckEnv() failed: %s", err)
 		return
 	}
-
+	if err := a.Initialize(); err != nil {
+		console.Fatalf("a.Initialize() failed: %s", err)
+		return
+	}
 }

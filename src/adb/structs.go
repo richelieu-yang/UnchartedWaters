@@ -19,7 +19,7 @@ type Adb struct {
 	Address string
 }
 
-func (adb Adb) CheckEnv() error {
+func (a *Adb) CheckEnv() error {
 	path, err := cmdKit.LookPath("adb")
 	if err != nil {
 		return errorKit.Wrapf(err, "fail to look path of adb")
@@ -35,14 +35,42 @@ func (adb Adb) CheckEnv() error {
 		console.Infof("adb version:\n%s", str)
 	}
 
-	// adb devices
-	{
-		str, err := cmdKit.RunCombinedlyToString(context.TODO(), "adb", "devices")
-		if err != nil {
-			return errorKit.Wrapf(err, "fail to run 'adb devices'")
-		}
-		console.Infof("adb devices:\n%s", str)
+	return nil
+}
+
+func (a *Adb) Initialize() error {
+	// pkill -f HD-Adb
+	// Richelieu: 此处返回的 err 不用管
+	_, _ = cmdKit.RunCombinedlyToString(context.TODO(), "pkill", "-f", "HD-Adb")
+
+	// pkill -f adb
+	// Richelieu: 此处返回的 err 不用管
+	_, _ = cmdKit.RunCombinedlyToString(context.TODO(), "pkill", "-f", "adb")
+
+	// adb kill-server
+	_, err := cmdKit.RunCombinedlyToString(context.TODO(), "adb", "kill-server")
+	if err != nil {
+		return errorKit.Wrapf(err, "fail to run 'adb kill-server'")
 	}
+
+	// adb start-server
+	_, err = cmdKit.RunCombinedlyToString(context.TODO(), "adb", "start-server")
+	if err != nil {
+		return errorKit.Wrapf(err, "fail to run 'adb start-server'")
+	}
+
+	// adb connect {a.Address}
+	_, err = cmdKit.RunCombinedlyToString(context.TODO(), "adb", "connect", a.Address)
+	if err != nil {
+		return errorKit.Wrapf(err, "fail to run 'adb connect %s'", a.Address)
+	}
+
+	// adb devices
+	devices, err := cmdKit.RunCombinedlyToString(context.TODO(), "adb", "devices")
+	if err != nil {
+		return errorKit.Wrapf(err, "fail to run 'adb devices'")
+	}
+	console.Infof("adb devices:\n%s", devices)
 
 	return nil
 }
